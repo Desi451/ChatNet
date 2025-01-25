@@ -1,0 +1,19 @@
+﻿body {
+    color: rebeccapurple;
+    background-color: rebeccapurple;
+}
+
+#chat-messages {
+    height: 60vh;
+    overflow-y: auto;
+}
+
+.message {
+    padding: 8px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+    .message:nth-child(even) {
+        background: #e9ecef;
+    }
