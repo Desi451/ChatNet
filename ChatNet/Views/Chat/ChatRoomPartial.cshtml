@@ -1,0 +1,106 @@
+﻿@model ChatViewModel
+
+<div id="chat-room" class="d-flex flex-column border" style="height: 600px;">
+    <div id="chat-header" class="bg-white border-bottom py-3 px-4">
+        <h5 class="mb-0">
+            Chat Room
+            @if (Model.CurrentChat != null)
+            {
+                <span>with @Model.CurrentChat.Name</span>
+            }
+        </h5>
+    </div>
+
+    <div id="chat-messages" class="flex-grow-1 overflow-auto p-3 bg-light border-top border-bottom">
+        <p class="text-muted">Start your conversation here...</p>
+    </div>
+
+    <div id="chat-input" class="bg-white border-top py-3 px-4">
+        <form id="messageForm">
+            <div class="input-group">
+                <input type="text"
+                       id="message"
+                       class="form-control"
+                       placeholder="Type your message..." />
+                <button  class="btn btn-primary">Send</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+        $("#messageForm").submit(function (event) {
+        event.preventDefault();
+
+        var message = $("#message").val();
+        console.log(message);
+
+        if (message.trim() === "") {
+            return;
+        }
+
+        connection.invoke("SendMessage", groupName, username, message).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        $("#message").val("").focus();
+    });
+
+</script>
+<script>
+    function createGroupName(user1, user2) {
+        return [user1, user2].sort().join("_");
+    }
+
+    var chatWithUser = '@(Model.CurrentChat != null ? Model.CurrentChat.Name : "")';
+    var groupName = chatWithUser !== "" ? createGroupName('@Model.UserName', chatWithUser) : "";
+    console.log(groupName);
+
+    function removeEventHandlers() {
+        connection.off("ReceiveMessage");
+        connection.off("UserJoined");
+        connection.off("UserLeft");
+    }
+
+    $(document).ready(function () {
+    removeEventHandlers();
+
+    if (chatWithUser !== "") {
+        $('#chat-partial-container').data('groupname', groupName);
+
+        connection.on("ReceiveMessage", function (user, message) {
+            var encodedUser = $("<div />").text(user).html();
+            var encodedMsg = $("<div />").text(message).html();
+            var newMessage = `<div class="message my-2">
+                                    <strong>${encodedUser}:</strong> ${encodedMsg}
+                                </div>`;
+            $("#chat-messages").append(newMessage);
+            $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight);
+        });
+
+        connection.on("UserJoined", function (user) {
+            var newUser = `<div class="message my-2">
+                                <strong>${user}</strong> dołączył do czatu.
+                            </div>`;
+            $("#chat-messages").append(newUser);
+        });
+
+        connection.on("UserLeft", function (user) {
+            var leftUser = `<div class="message my-2">
+                                <strong>${user}</strong> opuścił czat.
+                            </div>`;
+            $("#chat-messages").append(leftUser);
+        });
+
+        connection.invoke("JoinChat", groupName).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+    }});
+
+    function removeEventHandlers() {
+        connection.off("ReceiveMessage");
+        connection.off("UserJoined");
+        connection.off("UserLeft");
+    }
+</script>
