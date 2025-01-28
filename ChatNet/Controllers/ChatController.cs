@@ -30,6 +30,7 @@ public class ChatController : Controller
     {
         var model = await LoadData();
         model.CurrentChat = await _userService.GetUser(userId);
+        model.Messages = await _chatService.GetMessagesForChat(model.UserId, model.CurrentChat.Id);
         return PartialView("ChatRoomPartial", model);
     }
 
@@ -41,7 +42,7 @@ public class ChatController : Controller
         var user = await _userService.GetUser(id);
         var reciver = await _userService.GetUser(reciverId);
 
-        var result = new Message(user, reciver,message);
+        var result = new Message(user, reciver, message);
         await _chatService.AddMessage(result);
     }
 
@@ -52,6 +53,6 @@ public class ChatController : Controller
         var user = await _userService.GetUser(id);
         var onlineUsers = _onlineUsersService.GetOnlineUsers();
 
-        return new ChatViewModel(user.Friends, onlineUsers.ToList(), user.Name);
+        return new ChatViewModel(user.Friends, onlineUsers.ToList(), user.Name, id);
     }
 }
