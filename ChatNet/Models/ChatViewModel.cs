@@ -16,10 +16,10 @@ public class ChatViewModel
         UserName = userName;
     }
 
-    public User CurrentChat { get; set; }
+    public User? CurrentChat { get; set; }
     public string UserName { get; set; }
     public List<string> OnlineUsers { get; set; }
     public List<User> Friends { get; set; } = [];
     public List<int> ChatGroups { get; set; } = [];
-
+    public List<Message> Messages { get; set; } = [];
 }

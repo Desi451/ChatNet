@@ -1,5 +1,6 @@
 ﻿using ChatNet.Database;
 using ChatNet.Domain.Entity;
+using ChatNet.Services.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -57,10 +58,19 @@ public class AuthController : Controller
             return View();
         }
 
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
         if (user == null)
         {
-            ModelState.AddModelError("", "Invalid login attempt.");
+            ModelState.AddModelError("", "No user found");
+            return View();
+        }
+
+        var result = PasswordHelper.VerifyPassword(password, user.Password);
+
+        if (!result)
+        {
+            ModelState.AddModelError("", "Bad password");
             return View();
         }
 

@@ -22,6 +22,7 @@ builder.Services.AddSession(options =>
 
 //services
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddSingleton<OnlineUsersService>();
 
 builder.Services.AddSignalR();

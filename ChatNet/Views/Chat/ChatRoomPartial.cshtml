@@ -4,7 +4,7 @@
     <div id="chat-header" class="bg-white border-bottom py-3 px-4">
         <h5 class="mb-0">
             Chat Room
-            @if (Model.CurrentChat != null)
+            @if (Model != null && Model.CurrentChat != null)
             {
                 <span>with @Model.CurrentChat.Name</span>
             }
@@ -22,22 +22,41 @@
                        id="message"
                        class="form-control"
                        placeholder="Type your message..." />
-                <button  class="btn btn-primary">Send</button>
+                <input type="hidden"
+                       id="currentChatId"
+                       name="currentChatId"
+                       value="@Model.CurrentChat?.Id" />
+                <button class="btn btn-primary" @(Model.CurrentChat == null ? "disabled" : "")>Send</button>
             </div>
         </form>
     </div>
 </div>
 
 <script>
-        $("#messageForm").submit(function (event) {
+    $("#messageForm").submit(function (event) {
         event.preventDefault();
 
         var message = $("#message").val();
         console.log(message);
 
+        var currentChatId = $("#currentChatId").val();
+
         if (message.trim() === "") {
             return;
         }
+
+        $.ajax({
+            url: '@Url.Action("SaveMessage", "Chat")',
+            type: 'POST',
+            data: { reciverId: Number(currentChatId), message: message },
+            success: function (result) {
+                console.log('Saved');
+            },
+            error: function (xhr, status, error) {
+                console.error('Error loading chat:', error);
+                alert('Wystąpił błąd podczas ładowania czatu.');
+            }
+        });
 
         connection.invoke("SendMessage", groupName, username, message).catch(function (err) {
             return console.error(err.toString());
@@ -47,6 +66,7 @@
     });
 
 </script>
+
 <script>
     function createGroupName(user1, user2) {
         return [user1, user2].sort().join("_");

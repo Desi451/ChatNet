@@ -1,4 +1,6 @@
-﻿namespace ChatNet.Domain.Entity;
+﻿using ChatNet.Services.Helpers;
+
+namespace ChatNet.Domain.Entity;
 
 public class User
 {
@@ -7,7 +9,7 @@ public class User
     public User(string username, string password, string email)
     {
         Name = username;
-        Password = password;
+        Password = PasswordHelper.HashPassword(password);
         Email = email;
         AllowInvites = true;
     }
