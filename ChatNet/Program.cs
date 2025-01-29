@@ -49,5 +49,6 @@ app.MapControllerRoute(
 
 //hubs
 app.MapHub<ChatHub>("/chatHub");
+app.MapHub<NotficationsHub>("/notificationHub");
 
 app.Run();

@@ -26,8 +26,9 @@
                     <td class="text-center">@entry.Key.Email</td>
                     @if(!entry.Value){
                     <td class="text-center">
-                            <form method="post" action="@Url.Action("AddInvite", "Friends")">
+                            <form id="notficationForm" method="post" action="@Url.Action("AddInvite", "Friends")">
                                 <input type="hidden" name="invitedId" value="@entry.Key.Id" />
+                                <input id="invite" type="hidden" name="invitedName" value="@entry.Key.Name" />
                                 <input type="hidden" name="isUserInvite" value="true" />
                                 <button type="submit" class="btn btn-primary">Add</button>
                             </form>
@@ -95,3 +96,15 @@ else
 {
     <p class="text-center">No users found.</p>
 }
+
+<script>
+    $("#notficationForm").submit(function (event) {
+
+        var username = $("#invite").val();
+        console.log(username);
+
+        connection.invoke("SendNotification", username,"New Invite incoming!").catch(function (err) {
+            return console.error(err.toString());
+        });
+    });
+</script>

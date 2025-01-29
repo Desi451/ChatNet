@@ -69,6 +69,10 @@
             return;
         }
 
+        connection.invoke("SendMessage", groupName, username, message).catch(function (err) {
+            return console.error(err.toString());
+        });
+
         $.ajax({
             url: '@Url.Action("SaveMessage", "Chat")',
             type: 'POST',
@@ -81,10 +85,6 @@
                 console.error('Error saving message:', error);
                 alert('Wystąpił błąd podczas wysyłania wiadomości.');
             }
-        });
-
-        connection.invoke("SendMessage", groupName, username, message).catch(function (err) {
-            return console.error(err.toString());
         });
 
         $("#message").val("").focus();
