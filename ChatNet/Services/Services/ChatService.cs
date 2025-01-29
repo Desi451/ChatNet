@@ -32,4 +32,11 @@ public class ChatService : IChatService
             (u.Sender.Id == chatWithId && u.Reciver.Id == userId)
             ).ToListAsync();
     }
+
+    public async Task RemoveMessagesFromChat(int userId, int chatWithId)
+    {
+        List<Message> messages = await GetMessagesForChat(userId, chatWithId);
+        _context.Messages.RemoveRange(messages);
+        await _context.SaveChangesAsync();
+    }
 }

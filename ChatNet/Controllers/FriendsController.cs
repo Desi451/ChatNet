@@ -8,10 +8,12 @@ namespace ChatNet.Controllers;
 public class FriendsController : Controller
 {
     private readonly IUserService _userService;
+    private readonly IChatService _chatService;
 
-    public FriendsController(IUserService userService)
+    public FriendsController(IUserService userService, IChatService chatService)
     {
         _userService = userService;
+        _chatService = chatService;
     }
 
     [HttpGet]
@@ -87,6 +89,7 @@ public class FriendsController : Controller
     {
         var id = (int)HttpContext.Session.GetInt32("id");
         await _userService.RemoveFriend(id, friendId);
+        await _chatService.RemoveMessagesFromChat(id, friendId);
 
         return RedirectToAction("Index");
     }
