@@ -21,11 +21,13 @@ public class FriendsController : Controller
 
         var availableFriends = await _userService.GetAviableFriends();
         var friendsIds = await _userService.GetInvitedFriendsByUserId(id);
+        var user = await _userService.GetUser(id);
 
         var data = new SearchFriendViewModel
         {
             AviableFriends = new Dictionary<User, bool>(),
-            UserInvites = await _userService.GetUsersWhoInvited(id)
+            UserInvites = await _userService.GetUsersWhoInvited(id),
+            Friends = user.Friends
         };
 
         foreach (var friend in availableFriends.ToList())
@@ -77,6 +79,15 @@ public class FriendsController : Controller
         {
             await _userService.RemoveInvite(invitedId, id);
         }
+        return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> RemoveFriend(int friendId)
+    {
+        var id = (int)HttpContext.Session.GetInt32("id");
+        await _userService.RemoveFriend(id, friendId);
+
         return RedirectToAction("Index");
     }
 }

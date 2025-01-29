@@ -115,4 +115,15 @@ public class UserService : IUserService
 
         await _context.SaveChangesAsync();
     }
+
+    public async Task RemoveFriend(int userId, int friendId)
+    {
+        var user = await GetUser(userId);
+        var friendUser = await GetUser(friendId);
+
+        user.Friends.Remove(friendUser);
+        friendUser.Friends.Remove(user);
+
+        await _context.SaveChangesAsync();
+    }
 }

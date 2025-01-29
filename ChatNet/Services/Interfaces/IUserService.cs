@@ -11,4 +11,5 @@ public interface IUserService
     Task AddInvite(int userId, int invitedId);
     Task RemoveInvite(int userId, int invitedId);
     Task AddFriend(int userId, int friendId);
+    Task RemoveFriend(int userId, int friendId);
 }
